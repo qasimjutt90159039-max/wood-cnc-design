@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --paper: #FFFFFF;
+    --ivory: #F7F5F1;
+    --ash: #ECE9E3;
+    --charcoal: #221F1C;
+    --warm-gray: #6E6A63;
+    --hairline: #DAD5CC;
+    --walnut: #8A5A34;
+  }
+
+  body {
+    background-color: #FFFFFF;
+    color: #221F1C;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+}
+
+/* Technical Toolpath & Cut-Sheet Grid Utilities */
+.cut-grid {
+  background-image: 
+    linear-gradient(to right, rgba(218, 213, 204, 0.35) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(218, 213, 204, 0.35) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.cut-grid-dense {
+  background-image: 
+    linear-gradient(to right, rgba(218, 213, 204, 0.5) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(218, 213, 204, 0.5) 1px, transparent 1px);
+  background-size: 12px 12px;
+}
+
+/* Hairline border styling */
+.border-hairline-subtle {
+  border-color: #DAD5CC;
+}
+
+/* Smooth Accordion transition */
+.accordion-content {
+  transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
+}
+
+/* Quiet Monospace Tag */
+.mono-tag {
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}

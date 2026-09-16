@@ -1,0 +1,11 @@
+{
+  "name": "wood-cnc-design-shop-realcnc",
+  "version": "1.0.0",
+  "description": "Full-stack website for Wood CNC Design Shop - RealCNC (Interior Decorator, Ichhra Lahore)",
+  "scripts": {
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build:frontend": "cd frontend && npm run build",
+    "start:backend": "cd backend && npm start"
+  }
+}
