@@ -5,6 +5,7 @@ import SEO from '../components/common/SEO';
 import { projectService } from '../services/api';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import EmptyState from '../components/common/EmptyState';
+import { defaultProjects } from '../data/defaultData';
 
 const categories = ['All', 'Residential', 'Commercial', 'Renovation', 'Other'];
 
@@ -14,6 +15,22 @@ const Portfolio = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
 
+  const getFilteredDefaultProjects = () => {
+    let result = defaultProjects;
+    if (selectedCategory !== 'All') {
+      result = result.filter(p => p.category === selectedCategory);
+    }
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim();
+      result = result.filter(p => 
+        p.title.toLowerCase().includes(q) || 
+        p.description.toLowerCase().includes(q) || 
+        (p.location && p.location.toLowerCase().includes(q))
+      );
+    }
+    return result;
+  };
+
   const fetchProjects = () => {
     setLoading(true);
     const params = {};
@@ -22,11 +39,14 @@ const Portfolio = () => {
 
     projectService.getAll(params)
       .then(res => {
-        setProjects(res.data?.data || []);
+        if (res.data?.data && res.data.data.length > 0) {
+          setProjects(res.data.data);
+        } else {
+          setProjects(getFilteredDefaultProjects());
+        }
       })
-      .catch(err => {
-        console.error('Failed to load projects', err);
-        setProjects([]);
+      .catch(() => {
+        setProjects(getFilteredDefaultProjects());
       })
       .finally(() => setLoading(false));
   };

@@ -5,6 +5,7 @@ import { galleryService } from '../services/api';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import EmptyState from '../components/common/EmptyState';
 import Lightbox from '../components/common/Lightbox';
+import { defaultGallery } from '../data/defaultData';
 
 const categories = ['All', 'Panels', 'Interiors', 'Furniture', 'Detail', 'Other'];
 
@@ -17,6 +18,11 @@ const Gallery = () => {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
 
+  const getFilteredDefaultGallery = () => {
+    if (selectedCategory === 'All') return defaultGallery;
+    return defaultGallery.filter(item => item.category === selectedCategory);
+  };
+
   const fetchGallery = () => {
     setLoading(true);
     const params = {};
@@ -26,11 +32,14 @@ const Gallery = () => {
 
     galleryService.getAll(params)
       .then(res => {
-        setItems(res.data?.data || []);
+        if (res.data?.data && res.data.data.length > 0) {
+          setItems(res.data.data);
+        } else {
+          setItems(getFilteredDefaultGallery());
+        }
       })
-      .catch(err => {
-        console.error('Failed to load gallery items', err);
-        setItems([]);
+      .catch(() => {
+        setItems(getFilteredDefaultGallery());
       })
       .finally(() => setLoading(false));
   };

@@ -6,6 +6,7 @@ import { projectService } from '../services/api';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import Lightbox from '../components/common/Lightbox';
 import { RouterBitGlyph } from '../components/cutsheet/LineworkVector';
+import { defaultProjects } from '../data/defaultData';
 
 const PortfolioDetails = () => {
   const { id } = useParams();
@@ -25,11 +26,21 @@ const PortfolioDetails = () => {
         if (res.data?.data) {
           setProject(res.data.data);
         } else {
-          setError(true);
+          const found = defaultProjects.find(p => p._id === id);
+          if (found) {
+            setProject(found);
+          } else {
+            setError(true);
+          }
         }
       })
       .catch(() => {
-        setError(true);
+        const found = defaultProjects.find(p => p._id === id);
+        if (found) {
+          setProject(found);
+        } else {
+          setError(true);
+        }
       })
       .finally(() => setLoading(false));
   }, [id]);

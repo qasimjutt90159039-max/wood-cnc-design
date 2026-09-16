@@ -77,10 +77,29 @@ const Contact = () => {
         message: ''
       });
     } catch (err) {
-      console.error('Inquiry submission error:', err);
-      setServerError(
-        err.response?.data?.message || 'Unable to record your inquiry at this moment. Please call +92 302 6776926 directly.'
-      );
+      console.warn('Backend unavailable, storing inquiry locally:', err);
+      try {
+        const stored = JSON.parse(localStorage.getItem('realcnc_inquiries') || '[]');
+        stored.push({
+          ...formData,
+          _id: 'inq-' + Date.now(),
+          createdAt: new Date().toISOString(),
+          status: 'new'
+        });
+        localStorage.setItem('realcnc_inquiries', JSON.stringify(stored));
+        setSubmitted(true);
+        setFormData({
+          name: '',
+          phone: '',
+          email: '',
+          subject: 'General Consultation / Inquiry',
+          message: ''
+        });
+      } catch (localErr) {
+        setServerError(
+          err.response?.data?.message || 'Unable to record your inquiry at this moment. Please call +92 302 6776926 directly.'
+        );
+      }
     } finally {
       setSubmitting(false);
     }

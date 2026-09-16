@@ -50,6 +50,12 @@ const defaultServices = [
 
 const seedInitialData = async () => {
   try {
+    const mongoose = require('mongoose');
+    if (mongoose.connection.readyState !== 1) {
+      console.log('[RealCNC Seed] MongoDB offline. Skipping DB seed.');
+      return;
+    }
+
     // 1. Ensure Admin User exists
     const adminUser = (process.env.ADMIN_USER || 'admin').toLowerCase();
     const adminPass = process.env.ADMIN_PASS || 'realcnc2026!';

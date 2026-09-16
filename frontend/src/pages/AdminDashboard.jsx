@@ -9,6 +9,7 @@ import {
   inquiryService, projectService, shopService, galleryService, seedService 
 } from '../services/api';
 import LoadingSpinner from '../components/common/LoadingSpinner';
+import { defaultProjects, defaultServices, defaultGallery } from '../data/defaultData';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -68,17 +69,59 @@ const AdminDashboard = () => {
     setFeedback({ type: '', text: '' });
     try {
       if (activeTab === 'inquiries') {
-        const res = await inquiryService.getAll();
-        setInquiries(res.data?.data || []);
+        try {
+          const res = await inquiryService.getAll();
+          const apiInqs = res.data?.data || [];
+          const localInqs = JSON.parse(localStorage.getItem('realcnc_inquiries') || '[]');
+          // Merge unique inquiries
+          const combined = [...apiInqs];
+          localInqs.forEach(localItem => {
+            if (!combined.some(c => c._id === localItem._id)) {
+              combined.push(localItem);
+            }
+          });
+          setInquiries(combined);
+        } catch {
+          const localInqs = JSON.parse(localStorage.getItem('realcnc_inquiries') || '[]');
+          setInquiries(localInqs);
+        }
       } else if (activeTab === 'projects') {
-        const res = await projectService.getAll();
-        setProjects(res.data?.data || []);
+        try {
+          const res = await projectService.getAll();
+          if (res.data?.data && res.data.data.length > 0) {
+            setProjects(res.data.data);
+          } else {
+            const localProj = JSON.parse(localStorage.getItem('realcnc_projects') || 'null');
+            setProjects(localProj || defaultProjects);
+          }
+        } catch {
+          const localProj = JSON.parse(localStorage.getItem('realcnc_projects') || 'null');
+          setProjects(localProj || defaultProjects);
+        }
       } else if (activeTab === 'services') {
-        const res = await shopService.getAll({ all: true });
-        setServices(res.data?.data || []);
+        try {
+          const res = await shopService.getAll({ all: true });
+          if (res.data?.data && res.data.data.length > 0) {
+            setServices(res.data.data);
+          } else {
+            setServices(defaultServices);
+          }
+        } catch {
+          setServices(defaultServices);
+        }
       } else if (activeTab === 'gallery') {
-        const res = await galleryService.getAll();
-        setGallery(res.data?.data || []);
+        try {
+          const res = await galleryService.getAll();
+          if (res.data?.data && res.data.data.length > 0) {
+            setGallery(res.data.data);
+          } else {
+            const localGal = JSON.parse(localStorage.getItem('realcnc_gallery') || 'null');
+            setGallery(localGal || defaultGallery);
+          }
+        } catch {
+          const localGal = JSON.parse(localStorage.getItem('realcnc_gallery') || 'null');
+          setGallery(localGal || defaultGallery);
+        }
       }
     } catch (err) {
       console.error(err);
